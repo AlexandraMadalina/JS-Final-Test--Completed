@@ -1,0 +1,10 @@
+#error {
+    color: red;
+    height: 50px;
+}
+.shrink {
+    font-size: 1px;
+    height: 1px;
+    transition: 1s;
+    transition-timing-function: linear;
+}

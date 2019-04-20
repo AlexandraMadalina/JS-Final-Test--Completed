@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="index.css">
+    <title>The impossible game!</title>
+</head>
+
+<body class="bg-info">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 bg-white  mx-auto mt-4 border p-4">
+                <div id="error"></div>
+                <label><input type="search" class="form-control"></label>
+                <button type="button" class="btn btn-info">Add to shopping list ( <span>0</span> )</button>
+                <button type="button" class="btn btn-info">Delete</button>
+                <table id="table" class="table-striped w-25">
+                    <tr>
+                        <td colspan="2">Items</td>
+                    </tr>
+
+                </table>
+                <button type="button" class="btn btn-info" onclick="save()">Save</button>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        var btnAdd = document.getElementsByTagName("button")[0]
+        btnAdd.addEventListener("click", addItems);
+        var input = document.querySelector('input');
+        var errorMessage = document.getElementById("error");
+        var table = document.querySelector('table');
+        var rowNo = table.rows.length;
+        var NoOfItems = btnAdd.getElementsByTagName('span')[0];
+        var added = false;
+
+        input.onkeydown = function (e) {
+            var clear = "clear";
+            if (e.target.value.toUpperCase() == clear.toUpperCase() && event.key == "Enter") {
+                while (table.rows.length > 1) {
+                    table.deleteRow(1);
+                }
+                NoOfItems.innerText = 0;
+            }
+            return;
+        }
+
+        /*var items;
+
+        if (localStorage.getItem('items')) {
+            items = JSON.parse(localStorage.getItem('items'));
+        } else {
+            items = [];
+        }
+        localStorage.setItem('items', JSON.stringify(itemsArray));
+        var data = JSON.parse(localStorage.getItem('items'));
+
+        function save() {
+            itemsArray.push(input.value);
+            localStorage.setItem('items', JSON.stringify(itemsArray));
+        }
+        data.forEach(item => {
+            addRow(item);
+        })*/
+
+        function addItems() {
+            var icon = makeSpinnerIcon();
+            btnAdd.prepend(icon);
+            errorMessage.innerText = "";
+            setTimeout(function () {
+                btnAdd.removeChild(icon);
+                if (!input.value) {
+                    errorMessage.innerText = "Please fill in the box";
+                } else {
+                    checkIfAdded();
+                    if (added) {
+                        errorMessage.innerText = `${input.value} has already been added`;
+                        input.value = "";
+                        return;
+                    }
+                    var randomize = "randomize";
+                    if (input.value.toUpperCase() == randomize.toUpperCase()) {
+                        randomizeItems();
+                        return;
+                    }
+                    addRow(input.value);
+                    input.value = "";
+
+                }
+            }, 500)
+        }
+
+        function randomizeItems() {
+            var randomArr = ["bread", "meat", "pasta", "rice", "oil", "sauces", "salad", "cereals",
+                "cheese", "eggs"
+            ];
+            rowNo = table.rows.length;
+            for (let i = 1; i < rowNo; ++i) {
+                let j = Math.floor(Math.random() * randomArr.length);
+                if (i == 10) {
+                    randomArr = ["bread", "meat", "pasta", "rice", "oil", "sauces", "salad",
+                        "cereals", "cheese", "eggs"
+                    ];
+                }
+
+                table.rows[i].cells[0].innerText = randomArr[j];
+                randomArr.splice(j, 1);
+            }
+        }
+        var btnDelete = document.getElementsByTagName('button')[1];
+
+        btnDelete.addEventListener("click", searchAndDelete);
+
+        function searchAndDelete() {
+
+            checkIfAdded();
+            if (added) {
+                removeRow(input.i);
+            }
+        }
+
+        function checkIfAdded() {
+            rowNo = table.rows.length;
+            for (let i = 1; i < rowNo; ++i) {
+                var addedText = table.rows[i].cells[0].innerText;
+                if (addedText == input.value) {
+                    added = true;
+                    input.i = i;
+                    return;
+                }
+            }
+            added = false;
+            return;
+        }
+        var brightness = 95;
+
+        function addRow(text) {
+            rowNo = table.rows.length;
+            table.insertRow(rowNo);
+            table.rows[rowNo].addEventListener("mouseenter", deleteOnHover);
+            table.rows[rowNo].insertCell(0);
+            table.rows[rowNo].insertCell(1);
+            table.rows[rowNo].cells[0].innerText = text;
+            NoOfItems.innerText = rowNo;
+            var cross = addCross();
+            table.rows[rowNo].cells[1].appendChild(cross);
+            table.rows[rowNo].style.background = `hsl(0, 0%, ${brightness}%)`;
+            brightness -= 5;
+            var edit = addEdit();
+            table.rows[rowNo].cells[1].appendChild(edit);
+        }
+
+
+        function addCross() {
+            var crossIcon = document.createElement('i');
+            crossIcon.classList.add('fas', 'fa-times');
+            crossIcon.style.float = "right";
+            crossIcon.style.cursor = ("context-menu");
+            crossIcon.onclick = function (e) {
+                var x = e.target.parentNode.parentNode.rowIndex;
+                removeRow(x);
+
+            }
+            return crossIcon;
+        }
+
+        function addEdit() {
+            var editIcon = document.createElement('i');
+            editIcon.classList.add('far', 'fa-edit', 'mr-2');
+            editIcon.style.float = "right";
+            editIcon.style.cursor = ("context-menu");
+            editIcon.onclick = editCell;
+            return editIcon;
+        }
+
+        function editCell(e) {
+            var roIndex = e.target.parentNode.parentNode.rowIndex;
+            var inputCell = document.createElement('input');
+            var cell = table.rows[roIndex].cells[0]
+            inputCell.value = cell.innerText;
+            cell.innerText = "";
+            cell.appendChild(inputCell);
+            inputCell.onkeydown = function () {
+                if (event.key == "Enter") {
+                    cell.innerHTML = inputCell.value;
+                }
+            }
+        }
+        document.addEventListener("keydown", detectDelete);
+        var deletePressed = false;
+
+        function detectDelete() {
+            if (event.key == "Delete") {
+                deletePressed = true;
+            }
+            return;
+        }
+
+        function deleteOnHover(e) {
+            var y = e.target.rowIndex;
+            if (deletePressed) {
+                removeRow(y);
+                deletePressed = false;
+            }
+            return;
+        }
+
+        function removeRow(index) {
+            table.rows[index].classList.add('shrink');
+            setTimeout(function () {
+                table.deleteRow(index);
+                rowNo = table.rows.length;
+                NoOfItems.innerText = rowNo - 1;
+            }, 1000);
+
+
+            brightness = 95;
+            for (let i = 1; i < rowNo; ++i) {
+                table.rows[i].style.background = `hsl(0, 0%, ${brightness}%)`;
+                brightness -= 5;
+            }
+        }
+
+        function makeSpinnerIcon() {
+            var spinIcon = document.createElement('i');
+            spinIcon.classList.add('fas', 'fa-spinner', 'fa-spin', 'mr-2');
+            return spinIcon;
+        }
+    </script>
+
+</body>
+
+</html>
