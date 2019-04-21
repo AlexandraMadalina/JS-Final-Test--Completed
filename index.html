@@ -19,15 +19,16 @@
             <div class="col-12 bg-white  mx-auto mt-4 border p-4">
                 <div id="error"></div>
                 <label><input type="search" class="form-control"></label>
-                <button type="button" class="btn btn-info">Add to shopping list ( <span>0</span> )</button>
+                <button type="button" class="btn btn-info mx-4 my-4">Add to shopping list ( <span>0</span> )</button>
                 <button type="button" class="btn btn-info">Delete</button>
                 <table id="table" class="table-striped w-25">
                     <tr>
-                        <td colspan="2">Items</td>
+                        <td colspan="2">Items <button onclick="toggle()" class="fas fa-plus"></button></td>
                     </tr>
 
                 </table>
-                <button type="button" class="btn btn-info" onclick="save()">Save</button>
+                <button type="button" class="btn btn-info my-4 mr-4" onclick="save()">Save</button>
+                <button type="button" class="btn btn-info my-4" onclick="haveFun()">Go do groceries</button>
             </div>
         </div>
 
@@ -120,11 +121,18 @@
         btnDelete.addEventListener("click", searchAndDelete);
 
         function searchAndDelete() {
-
             checkIfAdded();
             if (added) {
                 removeRow(input.i);
+                return;
             }
+            if (!input.value) {
+                errorMessage.innerText = "Please fill in the box";
+                return;
+            }
+
+            errorMessage.innerText = `${input.value} not found`;
+            return;
         }
 
         function checkIfAdded() {
@@ -156,6 +164,14 @@
             brightness -= 5;
             var edit = addEdit();
             table.rows[rowNo].cells[1].appendChild(edit);
+
+            if (btnToggle.classList.contains('fa-plus')) {
+                table.rows[rowNo].style.display = "none";
+                table.rows[rowNo].classList.add('shrink');
+            } else {
+                table.rows[rowNo].style.display = "";
+            }
+
         }
 
 
@@ -233,6 +249,55 @@
             var spinIcon = document.createElement('i');
             spinIcon.classList.add('fas', 'fa-spinner', 'fa-spin', 'mr-2');
             return spinIcon;
+        }
+
+        function haveFun() {
+            alert("Have fun at the store");
+            deleteTable();
+        }
+        input.addEventListener("keydown", clear);
+
+        function clear(e) {
+            var clear = "clear";
+            if (event.key == "Enter" && e.target.value.toUpperCase() == clear.toUpperCase()) {
+                deleteTable();
+                input.value = "";
+            }
+
+        }
+
+        function deleteTable() {
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+        }
+        var btnToggle = document.querySelector('td>button');
+        btnToggle.style.float = "right";
+
+        function toggle() {
+            rowNo = table.rows.length;
+            if (btnToggle.classList.contains('fa-plus')) {
+                btnToggle.classList.remove('fa-plus');
+                btnToggle.classList.add('fa-minus');
+                for (let i = 1; i < rowNo; ++i) {
+                    table.rows[i].style.display = "";
+                    setTimeout(function () {
+                        table.rows[i].classList.remove('shrink');
+                        table.rows[i].classList.add('initialSize');
+                    }, 10);
+                }
+            } else {
+                btnToggle.classList.remove('fa-minus');
+                btnToggle.classList.add('fa-plus');
+                for (let i = 1; i < rowNo; ++i) {
+                    table.rows[i].classList.remove('initialSize');
+                    table.rows[i].classList.add('shrink');
+                    setTimeout(function () {
+                        table.rows[i].style.display = "none";
+                    }, 1000);
+                }
+            }
+
         }
     </script>
 
