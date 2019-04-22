@@ -23,7 +23,7 @@
                 <button type="button" class="btn btn-info">Delete</button>
                 <table id="table" class="table-striped w-25">
                     <tr>
-                        <td colspan="2">Items <button onclick="toggle()" class="fas fa-plus"></button></td>
+                        <td colspan="2">Items <button onclick="toggle()" class="fas"></button></td>
                     </tr>
 
                 </table>
@@ -42,10 +42,88 @@
         var rowNo = table.rows.length;
         var NoOfItems = btnAdd.getElementsByTagName('span')[0];
         var added = false;
+        var btnToggle = document.querySelector('td>button');
+        btnToggle.style.float = "right";
+        let toggleClass = localStorage.getItem('class') ? JSON.parse(localStorage.getItem('class')) : 'fa-plus';
+        btnToggle.classList.add(toggleClass);
+
+        function toggle() {
+            rowNo = table.rows.length;
+            let fa = '';
+            if (btnToggle.classList.contains('fa-plus')) {
+                btnToggle.classList.remove('fa-plus');
+                btnToggle.classList.add('fa-minus');
+                fa = 'fa-minus';
+                for (let i = 1; i < rowNo; ++i) {
+                    table.rows[i].style.display = "";
+                    setTimeout(function () {
+                        table.rows[i].classList.remove('shrink');
+                        table.rows[i].classList.add('initialSize');
+                    }, 10);
+                }
+            } else {
+                btnToggle.classList.remove('fa-minus');
+                btnToggle.classList.add('fa-plus');
+                fa = 'fa-plus';
+                for (let i = 1; i < rowNo; ++i) {
+                    table.rows[i].classList.remove('initialSize');
+                    table.rows[i].classList.add('shrink');
+                    setTimeout(function () {
+                        table.rows[i].style.display = "none";
+                    }, 1000);
+                }
+            }
+            localStorage.setItem('class', JSON.stringify(fa));
+        }
+        let itemsArray = localStorage.getItem('items') ? JSON.parse(localStorage.getItem('items')) : [];
+        localStorage.setItem('items', JSON.stringify(itemsArray));
+        const data = JSON.parse(localStorage.getItem('items'));
+
+        function save() {
+            rowNo = table.rows.length;
+            var value = "";
+            itemsArray = [];
+            for (let i = 1; i < rowNo; ++i) {
+                value = table.rows[i].cells[0].innerText
+                itemsArray.push(value);
+            }
+            console.log(itemsArray);
+            localStorage.setItem('items', JSON.stringify(itemsArray));
+        }
+
+        data.forEach(item => {
+            addRow(item);
+        });
+
+        var brightness = 95;
+
+        function addRow(text) {
+            rowNo = table.rows.length;
+            table.insertRow(rowNo);
+            if (btnToggle.classList.contains('fa-plus')) {
+                table.rows[rowNo].style.display = "none";
+                table.rows[rowNo].classList.add('shrink');
+            } else {
+                table.rows[rowNo].style.display = "";
+            }
+
+            table.rows[rowNo].addEventListener("mouseenter", deleteOnHover);
+            table.rows[rowNo].insertCell(0);
+            table.rows[rowNo].insertCell(1);
+            table.rows[rowNo].cells[0].innerText = text;
+            NoOfItems.innerText = rowNo;
+            var cross = addCross();
+            table.rows[rowNo].cells[1].appendChild(cross);
+            table.rows[rowNo].style.background = `hsl(0, 0%, ${brightness}%)`;
+            brightness -= 5;
+            var edit = addEdit();
+            table.rows[rowNo].cells[1].appendChild(edit);
+        }
 
         input.onkeydown = function (e) {
             var clear = "clear";
             if (e.target.value.toUpperCase() == clear.toUpperCase() && event.key == "Enter") {
+                localStorage.clear();
                 while (table.rows.length > 1) {
                     table.deleteRow(1);
                 }
@@ -53,24 +131,6 @@
             }
             return;
         }
-
-        /*var items;
-
-        if (localStorage.getItem('items')) {
-            items = JSON.parse(localStorage.getItem('items'));
-        } else {
-            items = [];
-        }
-        localStorage.setItem('items', JSON.stringify(itemsArray));
-        var data = JSON.parse(localStorage.getItem('items'));
-
-        function save() {
-            itemsArray.push(input.value);
-            localStorage.setItem('items', JSON.stringify(itemsArray));
-        }
-        data.forEach(item => {
-            addRow(item);
-        })*/
 
         function addItems() {
             var icon = makeSpinnerIcon();
@@ -148,31 +208,7 @@
             added = false;
             return;
         }
-        var brightness = 95;
 
-        function addRow(text) {
-            rowNo = table.rows.length;
-            table.insertRow(rowNo);
-            table.rows[rowNo].addEventListener("mouseenter", deleteOnHover);
-            table.rows[rowNo].insertCell(0);
-            table.rows[rowNo].insertCell(1);
-            table.rows[rowNo].cells[0].innerText = text;
-            NoOfItems.innerText = rowNo;
-            var cross = addCross();
-            table.rows[rowNo].cells[1].appendChild(cross);
-            table.rows[rowNo].style.background = `hsl(0, 0%, ${brightness}%)`;
-            brightness -= 5;
-            var edit = addEdit();
-            table.rows[rowNo].cells[1].appendChild(edit);
-
-            if (btnToggle.classList.contains('fa-plus')) {
-                table.rows[rowNo].style.display = "none";
-                table.rows[rowNo].classList.add('shrink');
-            } else {
-                table.rows[rowNo].style.display = "";
-            }
-
-        }
 
 
         function addCross() {
@@ -270,34 +306,6 @@
             while (table.rows.length > 1) {
                 table.deleteRow(1);
             }
-        }
-        var btnToggle = document.querySelector('td>button');
-        btnToggle.style.float = "right";
-
-        function toggle() {
-            rowNo = table.rows.length;
-            if (btnToggle.classList.contains('fa-plus')) {
-                btnToggle.classList.remove('fa-plus');
-                btnToggle.classList.add('fa-minus');
-                for (let i = 1; i < rowNo; ++i) {
-                    table.rows[i].style.display = "";
-                    setTimeout(function () {
-                        table.rows[i].classList.remove('shrink');
-                        table.rows[i].classList.add('initialSize');
-                    }, 10);
-                }
-            } else {
-                btnToggle.classList.remove('fa-minus');
-                btnToggle.classList.add('fa-plus');
-                for (let i = 1; i < rowNo; ++i) {
-                    table.rows[i].classList.remove('initialSize');
-                    table.rows[i].classList.add('shrink');
-                    setTimeout(function () {
-                        table.rows[i].style.display = "none";
-                    }, 1000);
-                }
-            }
-
         }
     </script>
 

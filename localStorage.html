@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="index.css">
+    <title>Document</title>
+</head>
+
+<body class="bg-info">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 bg-white  mx-auto mt-4 border p-4">
+                <div id="error"></div>
+                <label><input type="search" class="form-control"></label>
+                <button type="button" class="btn btn-info mx-4 my-4" onclick="addItem()">Add to shopping list </button>
+
+                <table id="table" class="table-striped w-25">
+                    <tr>
+                        <td colspan="2">Items <button class="fas fa-plus"></button></td>
+                    </tr>
+
+                </table>
+                <button type="button" class="btn btn-info my-4 mr-4" onclick="save()">Save</button>
+                <button type="button" class="btn btn-info my-4 mr-4" onclick="deleteTable()">clear</button>
+
+            </div>
+        </div>
+
+    </div>
+
+</body>
+<script>
+    var input = document.querySelector('input');
+    var rowNo = table.rows.length;
+
+    function addItem() {
+        addRow(input.value);
+        input.value = "";
+    }
+
+    function addRow(text) {
+        rowNo = table.rows.length;
+        table.insertRow(rowNo);
+        table.rows[rowNo].insertCell(0);
+        table.rows[rowNo].insertCell(1);
+        table.rows[rowNo].cells[0].innerText = text;
+    }
+    let itemsArray = localStorage.getItem('items') ? JSON.parse(localStorage.getItem('items')) : [];
+    localStorage.setItem('items', JSON.stringify(itemsArray));
+    const data = JSON.parse(localStorage.getItem('items'));
+
+
+    function save() {
+        rowNo = table.rows.length;
+        var value = "";
+        itemsArray = [];
+        for (let i = 1; i < rowNo; ++i) {
+            value = table.rows[i].cells[0].innerText
+            itemsArray.push(value);
+
+        }
+        console.log(itemsArray);
+        localStorage.setItem('items', JSON.stringify(itemsArray));
+    }
+
+    data.forEach(item => {
+        addRow(item);
+    });
+   
+    function deleteTable() {
+        console.log("jnuhiui");
+        localStorage.clear();
+        rowNo = table.rows.length;
+        while (table.rows.length > 1) {
+            table.deleteRow(1);
+        }
+    }
+</script>
+
+</html>
