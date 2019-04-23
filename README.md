@@ -17,7 +17,7 @@ When you manipulate the events you have to ask yourself the following questions:
 
 ## Instructions
 
-List of full instructions available [here](https://github.com/becodeorg/GNT-Yu-1.10/blob/master/2.The-Hills/1.Javascript-Intro/1.DOM-Manipulation/6.Final-Test.md);
+List of full instructions available [here](https://github.com/becodeorg/GNT-Yu-1.10/blob/master/2.The-Hills/1.Javascript-Intro/1.DOM-Manipulation/6.Final-Test.md)
 
 ## The most difficult tasks
 
@@ -41,5 +41,6 @@ I liked task 21 because I got to play a little with arrays.
 ## Results
 
 Results available [here](https://alexandramadalina.github.io/JS-Final-Test--Completed/)
+
 Overall, I think this test has a good structure. Tasks are interconnected and have a domino effect. I enjoyed this test, it was a good challenge and kept my interest until the end. I like the way it pushes your hand to write your code in a certain way,  so that you can reuse picece of code for other scopes.
 
