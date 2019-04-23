@@ -36,6 +36,8 @@
     <script>
         var btnAdd = document.getElementsByTagName("button")[0]
         btnAdd.addEventListener("click", addItems);
+        document.addEventListener("keydown", detectDelete);
+        var deletePressed = false;
         var input = document.querySelector('input');
         var errorMessage = document.getElementById("error");
         var table = document.querySelector('table');
@@ -46,6 +48,9 @@
         btnToggle.style.float = "right";
         let toggleClass = localStorage.getItem('class') ? JSON.parse(localStorage.getItem('class')) : 'fa-plus';
         btnToggle.classList.add(toggleClass);
+        let itemsArray = localStorage.getItem('items') ? JSON.parse(localStorage.getItem('items')) : [];
+        localStorage.setItem('items', JSON.stringify(itemsArray));
+        const data = JSON.parse(localStorage.getItem('items'));
 
         function toggle() {
             rowNo = table.rows.length;
@@ -70,14 +75,12 @@
                     table.rows[i].classList.add('shrink');
                     setTimeout(function () {
                         table.rows[i].style.display = "none";
-                    }, 1000);
+                    }, 500);
                 }
             }
             localStorage.setItem('class', JSON.stringify(fa));
         }
-        let itemsArray = localStorage.getItem('items') ? JSON.parse(localStorage.getItem('items')) : [];
-        localStorage.setItem('items', JSON.stringify(itemsArray));
-        const data = JSON.parse(localStorage.getItem('items'));
+
 
         function save() {
             rowNo = table.rows.length;
@@ -87,15 +90,13 @@
                 value = table.rows[i].cells[0].innerText
                 itemsArray.push(value);
             }
-            console.log(itemsArray);
+            
             localStorage.setItem('items', JSON.stringify(itemsArray));
         }
-
+        var brightness = 100;
         data.forEach(item => {
             addRow(item);
         });
-
-        var brightness = 95;
 
         function addRow(text) {
             rowNo = table.rows.length;
@@ -106,7 +107,6 @@
             } else {
                 table.rows[rowNo].style.display = "";
             }
-
             table.rows[rowNo].addEventListener("mouseenter", deleteOnHover);
             table.rows[rowNo].insertCell(0);
             table.rows[rowNo].insertCell(1);
@@ -119,7 +119,6 @@
             var edit = addEdit();
             table.rows[rowNo].cells[1].appendChild(edit);
         }
-
         input.onkeydown = function (e) {
             var clear = "clear";
             if (e.target.value.toUpperCase() == clear.toUpperCase() && event.key == "Enter") {
@@ -134,7 +133,9 @@
 
         function addItems() {
             var icon = makeSpinnerIcon();
-            btnAdd.prepend(icon);
+            if (!btnAdd.contains(btnAdd.querySelector('.fas'))) {
+                btnAdd.prepend(icon);
+            }
             errorMessage.innerText = "";
             setTimeout(function () {
                 btnAdd.removeChild(icon);
@@ -154,7 +155,6 @@
                     }
                     addRow(input.value);
                     input.value = "";
-
                 }
             }, 500)
         }
@@ -171,13 +171,11 @@
                         "cereals", "cheese", "eggs"
                     ];
                 }
-
                 table.rows[i].cells[0].innerText = randomArr[j];
                 randomArr.splice(j, 1);
             }
         }
         var btnDelete = document.getElementsByTagName('button')[1];
-
         btnDelete.addEventListener("click", searchAndDelete);
 
         function searchAndDelete() {
@@ -190,7 +188,6 @@
                 errorMessage.innerText = "Please fill in the box";
                 return;
             }
-
             errorMessage.innerText = `${input.value} not found`;
             return;
         }
@@ -209,8 +206,6 @@
             return;
         }
 
-
-
         function addCross() {
             var crossIcon = document.createElement('i');
             crossIcon.classList.add('fas', 'fa-times');
@@ -219,7 +214,6 @@
             crossIcon.onclick = function (e) {
                 var x = e.target.parentNode.parentNode.rowIndex;
                 removeRow(x);
-
             }
             return crossIcon;
         }
@@ -267,18 +261,19 @@
 
         function removeRow(index) {
             table.rows[index].classList.add('shrink');
+            brightness = 100;
             setTimeout(function () {
                 table.deleteRow(index);
                 rowNo = table.rows.length;
-                NoOfItems.innerText = rowNo - 1;
-            }, 1000);
-
-
-            brightness = 95;
-            for (let i = 1; i < rowNo; ++i) {
+                for (let i = 1; i < rowNo; ++i) {
+                console.log(brightness);
+                console.log(i);
                 table.rows[i].style.background = `hsl(0, 0%, ${brightness}%)`;
                 brightness -= 5;
             }
+                NoOfItems.innerText = rowNo - 1;
+            }, 500);
+            input.value = "";
         }
 
         function makeSpinnerIcon() {
@@ -291,15 +286,16 @@
             alert("Have fun at the store");
             deleteTable();
         }
-        input.addEventListener("keydown", clear);
+        input.addEventListener("keydown", clearTable);
 
-        function clear(e) {
+        function clearTable(e) {
             var clear = "clear";
+            
             if (event.key == "Enter" && e.target.value.toUpperCase() == clear.toUpperCase()) {
+                brightness = 100;
                 deleteTable();
                 input.value = "";
             }
-
         }
 
         function deleteTable() {

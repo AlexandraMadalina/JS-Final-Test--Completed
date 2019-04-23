@@ -4,8 +4,9 @@
 }
 .shrink {
     font-size: 0px;
-    transition: 1s;
+    transition: 500ms;
     transition-timing-function: linear;
+    
 }
 
 .initialSize{
