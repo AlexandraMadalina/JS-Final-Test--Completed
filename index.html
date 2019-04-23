@@ -90,7 +90,7 @@
                 value = table.rows[i].cells[0].innerText
                 itemsArray.push(value);
             }
-            
+
             localStorage.setItem('items', JSON.stringify(itemsArray));
         }
         var brightness = 100;
@@ -122,7 +122,6 @@
         input.onkeydown = function (e) {
             var clear = "clear";
             if (e.target.value.toUpperCase() == clear.toUpperCase() && event.key == "Enter") {
-                localStorage.clear();
                 while (table.rows.length > 1) {
                     table.deleteRow(1);
                 }
@@ -266,11 +265,9 @@
                 table.deleteRow(index);
                 rowNo = table.rows.length;
                 for (let i = 1; i < rowNo; ++i) {
-                console.log(brightness);
-                console.log(i);
-                table.rows[i].style.background = `hsl(0, 0%, ${brightness}%)`;
-                brightness -= 5;
-            }
+                    table.rows[i].style.background = `hsl(0, 0%, ${brightness}%)`;
+                    brightness -= 5;
+                }
                 NoOfItems.innerText = rowNo - 1;
             }, 500);
             input.value = "";
@@ -286,23 +283,15 @@
             alert("Have fun at the store");
             deleteTable();
         }
-        input.addEventListener("keydown", clearTable);
-
-        function clearTable(e) {
-            var clear = "clear";
-            
-            if (event.key == "Enter" && e.target.value.toUpperCase() == clear.toUpperCase()) {
-                brightness = 100;
-                deleteTable();
-                input.value = "";
-            }
-        }
+     
 
         function deleteTable() {
             while (table.rows.length > 1) {
                 table.deleteRow(1);
             }
         }
+
+      
     </script>
 
 </body>
