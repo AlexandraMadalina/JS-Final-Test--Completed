@@ -40,7 +40,7 @@ I liked task 21 because I got to play a little with arrays.
 
 ## Results
 
-Results available [here](https://alexandramadalina.github.io/JS-Final-Test--Completed/)
+Results available [here](https://alexandramadalina.github.io/JS-Final-Test-Completed/)
 
 Overall, I think this test has a good structure. Tasks are interconnected and have a domino effect. I enjoyed this test, it was a good challenge and kept my interest until the end. I like the way it pushes your hand to write your code in a certain way,  so that you can reuse picece of code for other scopes.
 
